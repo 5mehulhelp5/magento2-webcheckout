@@ -12,7 +12,8 @@ use Magento\Sales\Api\Data\OrderExtensionFactory;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderSearchResultInterface;
 use Magento\Sales\Api\Data\OrderSearchResultInterfaceFactory as SearchResultFactory;
-use Magento\Sales\Model\Order\ShippingAssignmentBuilder;
+use Magento\Sales\Api\Data\ShippingAssignmentInterfaceFactory;
+use Magento\Sales\Model\Order\ShippingBuilderFactory;
 use Magento\Tax\Api\OrderTaxManagementInterface;
 use Shopgate\WebCheckout\Api\ShopgateWebCheckoutOrderRepositoryInterface;
 use Shopgate\WebCheckout\Model\ResourceModel\ShopgateWebCheckoutOrder as WebCheckoutOrder;
@@ -24,9 +25,10 @@ class ShopgateWebCheckoutOrderRepository implements ShopgateWebCheckoutOrderRepo
      * @param SearchResultFactory                   $searchResultFactory
      * @param JoinProcessorInterface                $extensionAttributesJoinProcessor
      * @param OrderExtensionFactory                 $orderExtensionFactory
-     * @param ShippingAssignmentBuilder             $shippingAssignmentBuilder
      * @param OrderTaxManagementInterface           $orderTaxManagement
      * @param PaymentAdditionalInfoInterfaceFactory $paymentAdditionalInfoFactory
+     * @param ShippingAssignmentInterfaceFactory    $shippingAssignmentFactory
+     * @param ShippingBuilderFactory                $shippingBuilderFactory
      * @param JsonSerializer                        $serializer
      */
     public function __construct(
@@ -34,9 +36,10 @@ class ShopgateWebCheckoutOrderRepository implements ShopgateWebCheckoutOrderRepo
         private readonly SearchResultFactory $searchResultFactory,
         private readonly JoinProcessorInterface $extensionAttributesJoinProcessor,
         private readonly OrderExtensionFactory $orderExtensionFactory,
-        private readonly ShippingAssignmentBuilder $shippingAssignmentBuilder,
         private readonly OrderTaxManagementInterface $orderTaxManagement,
         private readonly PaymentAdditionalInfoInterfaceFactory $paymentAdditionalInfoFactory,
+        private readonly ShippingAssignmentInterfaceFactory $shippingAssignmentFactory,
+        private readonly ShippingBuilderFactory $shippingBuilderFactory,
         private readonly JsonSerializer $serializer
     ) {
     }
@@ -80,8 +83,14 @@ class ShopgateWebCheckoutOrderRepository implements ShopgateWebCheckoutOrderRepo
             return;
         }
 
-        $this->shippingAssignmentBuilder->setOrder($order);
-        $extensionAttributes->setShippingAssignments($this->shippingAssignmentBuilder->create());
+        $shippingAssignment =  $this->shippingAssignmentFactory->create();
+        $shipping = $this->shippingBuilderFactory->create();
+        $shipping->setOrderId($order->getEntityId());
+        $shippingAssignment->setShipping($shipping->create());
+        $shippingAssignment->setItems($order->getItems());
+        $shippingAssignment->setStockId($order->getStockId());
+        $extensionAttributes->setShippingAssignments([$shippingAssignment]);
+
         $order->setExtensionAttributes($extensionAttributes);
     }
 
