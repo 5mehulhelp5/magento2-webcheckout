@@ -80,7 +80,7 @@ class ShopgateWebCheckoutOrderRepository implements ShopgateWebCheckoutOrderRepo
             return;
         }
 
-        $this->shippingAssignmentBuilder->setOrderId($order->getEntityId());
+        $this->shippingAssignmentBuilder->setOrder($order);
         $extensionAttributes->setShippingAssignments($this->shippingAssignmentBuilder->create());
         $order->setExtensionAttributes($extensionAttributes);
     }
