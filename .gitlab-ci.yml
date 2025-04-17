@@ -29,8 +29,9 @@ test:
       variables:
         discovery.type: "single-node"
         bootstrap.memory_lock: "true"
-        OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g -Ehttp.port=9201"
+        OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
         DISABLE_SECURITY_PLUGIN: "true"
+        http.port: "9201"
     - name: rabbitmq:3-management
       alias: rabbitmq
     - name: redis:6.2
