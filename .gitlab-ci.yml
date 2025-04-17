@@ -26,7 +26,7 @@ test:
       command: [ "elasticsearch", "-Ediscovery.type=single-node" ]
     - name: opensearchproject/opensearch:2.19.1
       alias: opensearch
-      command: ["discovery.type=single-node", "bootstrap.memory_lock=true", "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g", "DISABLE_SECURITY_PLUGIN=true"]
+      command: ["discovery.type=single-node", "bootstrap.memory_lock=true", "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g", "DISABLE_SECURITY_PLUGIN=true", "-Ehttp.port=9201"]
     - name: rabbitmq:3-management
       alias: rabbitmq
     - name: redis:6.2
