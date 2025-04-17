@@ -13,6 +13,7 @@ test:
     MYSQL_USER: magento
     MYSQL_PASSWORD: magento
     ELASTICSEARCH_HOST: elasticsearch
+    OPENSEARCH_HOST: opensearch
   services:
     - name: mariadb:10.4
       alias: mysql
@@ -23,6 +24,9 @@ test:
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
       alias: elasticsearch
       command: [ "elasticsearch", "-Ediscovery.type=single-node" ]
+    - name: opensearchproject/opensearch:2.19.1
+      alias: opensearch
+      command: ["discovery.type=single-node", "bootstrap.memory_lock=true", "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g", "DISABLE_SECURITY_PLUGIN=true"]
     - name: rabbitmq:3-management
       alias: rabbitmq
     - name: redis:6.2
