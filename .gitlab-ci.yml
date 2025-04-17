@@ -42,7 +42,7 @@ test:
     matrix:
       - PHP: "8.1"
         MAGE_VER: "2.4.5-p1"
-      - PHP: "8.2"
+      - PHP: "8.3"
         MAGE_VER: "2.4.8" # if you change, the image needs to be created
   script:
     - export APP_URL="http://$HOSTNAME"
