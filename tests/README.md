@@ -35,5 +35,25 @@ npm run local
 ```shell
 bin/magento config:set webapi/jwtauth/admin_expiration 9999
 bin/magento config:set admin/security/session_lifetime 31536000
+bin/magento config:set payment/cashondelivery/active 1
 bin/magento cache:flush
+```
+
+### Cypress tests
+I use PNP as a package manager for re-usable packages, so here is the way I would do it
+```shell
+npm i -g pnpm
+pnpm install
+node_modules/.bin/cypress install
+```
+Running:
+```shell
+export CYPRESS_baseUrl=http://mage2.local
+pnpm cypress open
+```
+If you prefer `npm` you can open with `node_modules/.bin/cypress open` as well.
+
+You will need to enable a second payment method for the order tests to work:
+```shell
+bin/magento config:set payment/cashondelivery/active 1
 ```

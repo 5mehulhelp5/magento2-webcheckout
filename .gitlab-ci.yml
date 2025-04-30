@@ -13,6 +13,7 @@ test:
     MYSQL_USER: magento
     MYSQL_PASSWORD: magento
     ELASTICSEARCH_HOST: elasticsearch
+    OPENSEARCH_HOST: opensearch
   services:
     - name: mariadb:10.4
       alias: mysql
@@ -23,6 +24,14 @@ test:
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
       alias: elasticsearch
       command: [ "elasticsearch", "-Ediscovery.type=single-node" ]
+    - name: opensearchproject/opensearch:2.19.1
+      alias: opensearch
+      variables:
+        discovery.type: "single-node"
+        bootstrap.memory_lock: "true"
+        OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
+        DISABLE_SECURITY_PLUGIN: "true"
+        http.port: "9201"
     - name: rabbitmq:3-management
       alias: rabbitmq
     - name: redis:6.2
@@ -33,8 +42,8 @@ test:
     matrix:
       - PHP: "8.1"
         MAGE_VER: "2.4.5-p1"
-      - PHP: "8.2"
-        MAGE_VER: "2.4.7-p4" # if you change, the image needs to be created
+      - PHP: "8.3"
+        MAGE_VER: "2.4.8" # if you change, the image needs to be created
   script:
     - export APP_URL="http://$HOSTNAME"
     - export CYPRESS_baseUrl=$APP_URL
