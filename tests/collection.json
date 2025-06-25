@@ -5575,14 +5575,23 @@
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"pm.test(\"Has elements\", function () {",
+											"pm.test(\"Has element\", function () {",
 											"    var jsonData = pm.response.json();",
 											"    pm.expect(jsonData.products).to.be.a('array');",
-											"    pm.expect(jsonData.products).to.be.lengthOf(3);",
+											"    pm.expect(jsonData.products).to.be.lengthOf(1);",
 											"",
-											"    const child = jsonData.products.find(item => item.id === String(pm.environment.get('gen_config_child_product1_id')));",
-											"    pm.expect(child).not.be.undefined;",
-											"    pm.expect(child.parent_sku).to.eq(pm.environment.get('created_prod_config_champ_sku'));",
+											"    const bundle = jsonData.products.find(item => item.sku === \"24-WG080\");",
+											"    pm.expect(bundle).not.be.undefined;",
+											"    pm.expect(bundle.selected_options).not.be.undefined;",
+											"});",
+											"",
+											"pm.test(\"Has Bundle expected config\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const bundle = jsonData.products.find(item => item.sku === \"24-WG080\");",
+											"    ",
+											"    const selectedOptions = JSON.parse(bundle.selected_options);",
+											"    pm.expect(selectedOptions).to.be.a('array');",
+											"    pm.expect(selectedOptions).to.be.lengthOf(9);",
 											"});"
 										],
 										"type": "text/javascript",
@@ -5604,7 +5613,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{m2_endpoint_api_sgwebc}}/productsBySku?skus[]={{gen_simple_product1_sku}}&skus[]={{created_prod_child_champ_m_sku}}&skus[]={{created_prod_config_champ_sku}}",
+									"raw": "{{m2_endpoint_api_sgwebc}}/productsBySku?skus[]=24-WG080",
 									"host": [
 										"{{m2_endpoint_api_sgwebc}}"
 									],
@@ -5614,15 +5623,7 @@
 									"query": [
 										{
 											"key": "skus[]",
-											"value": "{{gen_simple_product1_sku}}"
-										},
-										{
-											"key": "skus[]",
-											"value": "{{created_prod_child_champ_m_sku}}"
-										},
-										{
-											"key": "skus[]",
-											"value": "{{created_prod_config_champ_sku}}"
+											"value": "24-WG080"
 										}
 									]
 								}
