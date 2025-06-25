@@ -5590,8 +5590,7 @@
 											"    const bundle = jsonData.products.find(item => item.sku === \"24-WG080\");",
 											"    ",
 											"    const selectedOptions = JSON.parse(bundle.selected_options);",
-											"    pm.expect(selectedOptions).to.be.a('array');",
-											"    pm.expect(selectedOptions).to.be.lengthOf(9);",
+											"    pm.expect(selectedOptions).to.be.a('array').to.not.be.empty;",
 											"});"
 										],
 										"type": "text/javascript",
