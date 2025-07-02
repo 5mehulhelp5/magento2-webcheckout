@@ -78,6 +78,9 @@ class Product implements ProductInterface
                     foreach (
                         $product->getTypeInstance()->getSelectionsCollection([$option->getId()], $product) as $selection
                     ) {
+                        if ((bool)$selection->getIsDefault() === false) {
+                            continue;
+                        }
                         $selectedOptions[] = base64_encode('bundle/' . $option->getId() . '/' . $selection->getSelectionId() . '/1');
                     }
                 }
