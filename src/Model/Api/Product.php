@@ -2,11 +2,13 @@
 
 namespace Shopgate\WebCheckout\Model\Api;
 
+use Magento\Bundle\Model\Product\Type as BundleType;
 use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\InputException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 use Shopgate\WebCheckout\Api\ProductInstanceInterface;
 use Shopgate\WebCheckout\Api\ProductInterface;
@@ -19,7 +21,8 @@ class Product implements ProductInterface
         private readonly ProductResultFactory $resultFactory,
         private readonly ProductInstanceFactory $instanceFactory,
         private readonly LoggerInterface $logger,
-        private readonly ResourceConnection $resourceConnection
+        private readonly ResourceConnection $resourceConnection,
+        private readonly Json $serializer
     ) {
     }
 
@@ -68,14 +71,28 @@ class Product implements ProductInterface
         /** @var ProductResultInterface $result */
         $result = $this->resultFactory->create();
         foreach ($collection as $product) {
+            $selectedOptions = [];
+
+            if ($product->getTypeId() === BundleType::TYPE_CODE) {
+                foreach ($product->getTypeInstance()->getOptions($product) as $option) {
+                    foreach (
+                        $product->getTypeInstance()->getSelectionsCollection([$option->getId()], $product) as $selection
+                    ) {
+                        $selectedOptions[] = base64_encode('bundle/' . $option->getId() . '/' . $selection->getSelectionId() . '/1');
+                    }
+                }
+            }
+
             /** @var ProductInstanceInterface $instance */
             $instance = $this->instanceFactory->create();
             $result->addProduct(
                 $instance
                     ->setParentSku($product->getData('parent_sku'))
                     ->setEnteredOptions(null)
-                    ->setSelectedOptions(null)
-                    ->setSku($product->getSku())
+                    ->setSelectedOptions(!empty($selectedOptions)
+                        ? $this->serializer->serialize($selectedOptions)
+                        : null
+                    )->setSku($product->getSku())
                     ->setId($product->getId())
             );
         }

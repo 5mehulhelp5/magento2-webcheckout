@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "62552bba-e617-437a-9c15-db16de64aa8e",
+		"_postman_id": "a51b8d5b-57ae-49e5-813d-e93b8f76f71d",
 		"name": "M2 SG WebCheckout",
 		"description": "M2 - guest or customer API calls\n\nM2A - admin API calls\n\nFE - frontend page calls (e.g. cart page)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "5289226"
+		"_exporter_id": "4465207",
+		"_collection_link": "https://orange-comet-319647.postman.co/workspace/My-Workspace~8393489d-3b51-4024-88fd-4a6d5490441c/collection/4465207-a51b8d5b-57ae-49e5-813d-e93b8f76f71d?action=share&source=collection_link&creator=4465207"
 	},
 	"item": [
 		{
@@ -5557,6 +5558,71 @@
 										{
 											"key": "skus[]",
 											"value": "{{created_prod_config_champ_sku}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "M2: get product Bundle configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Has element\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.products).to.be.a('array');",
+											"    pm.expect(jsonData.products).to.be.lengthOf(1);",
+											"",
+											"    const bundle = jsonData.products.find(item => item.sku === \"24-WG080\");",
+											"    pm.expect(bundle).not.be.undefined;",
+											"    pm.expect(bundle.selected_options).not.be.undefined;",
+											"});",
+											"",
+											"pm.test(\"Has Bundle expected config\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const bundle = jsonData.products.find(item => item.sku === \"24-WG080\");",
+											"    ",
+											"    const selectedOptions = JSON.parse(bundle.selected_options);",
+											"    pm.expect(selectedOptions).to.be.a('array').to.not.be.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{gen_customerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{m2_endpoint_api_sgwebc}}/productsBySku?skus[]=24-WG080",
+									"host": [
+										"{{m2_endpoint_api_sgwebc}}"
+									],
+									"path": [
+										"productsBySku"
+									],
+									"query": [
+										{
+											"key": "skus[]",
+											"value": "24-WG080"
 										}
 									]
 								}
